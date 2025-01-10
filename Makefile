@@ -1,22 +1,23 @@
-
 CC = gcc
-CFLAGS = -Wall -lpthread
+CFLAGS = -Wall -Wextra -pthread
+LDFLAGS = -lncurses
 
 SRC_DIR = src
-OBJ_DIR = obj
+MAPS_DIR = $(SRC_DIR)/maps
+SOURCES = $(SRC_DIR)/client.c $(SRC_DIR)/server.c $(SRC_DIR)/world.c $(SRC_DIR)/menu.c
+HEADERS = $(SRC_DIR)/world.h $(SRC_DIR)/menu.h
 
-SRC = $(SRC_DIR)/main.c $(SRC_DIR)/game.c $(SRC_DIR)/menu.c
-OBJ = $(SRC:.c=.o)
-TARGET = game
+SERVER_BIN = server
+CLIENT_BIN = client
 
-all: $(TARGET)
+all: $(SERVER_BIN) $(CLIENT_BIN)
 
-$(TARGET): $(OBJ)
-	$(CC) $(CFLAGS) -o $@ $^
+$(SERVER_BIN): $(SRC_DIR)/server.c $(SRC_DIR)/world.c
+	$(CC) $(CFLAGS) -o $@ $(SRC_DIR)/server.c $(SRC_DIR)/world.c $(LDFLAGS)
 
-$(SRC_DIR)/%.o: $(SRC_DIR)/%.c
-	$(CC) $(CFLAGS) -c $< -o $@
+$(CLIENT_BIN): $(SRC_DIR)/client.c $(SRC_DIR)/world.c $(SRC_DIR)/menu.c
+	$(CC) $(CFLAGS) -o $@ $(SRC_DIR)/client.c $(SRC_DIR)/world.c $(SRC_DIR)/menu.c $(LDFLAGS)
 
 clean:
-	rm -f $(OBJ)/*.o $(TARGET)
+	rm -f $(SERVER_BIN) $(CLIENT_BIN)
 
